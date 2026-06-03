@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class DukeFreeFoodFinderBackendApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(DukeFreeFoodFinderBackendApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(DukeFreeFoodFinderBackendApplication.class, args);
+    }
 
 }
