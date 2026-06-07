@@ -1,10 +1,13 @@
 package com.joshualiu.dukefreefoodfinderbackend.food;
 
+import com.joshualiu.dukefreefoodfinderbackend.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 public class Food {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,14 +33,25 @@ public class Food {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "expires_at", nullable = false)
+    private LocalDateTime expiresAt;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     public Food() {}
 
-    public Food(String title, String description, Double latitude, Double longitude, String locationDetails) {
+    public Food(String title, String description, Double latitude, Double longitude,
+                String locationDetails, LocalDateTime expiresAt, User user) {
         this.title = title;
         this.description = description;
         this.latitude = latitude;
         this.longitude = longitude;
         this.locationDetails = locationDetails;
+        this.expiresAt = expiresAt;
+        this.user = user;
     }
 
     @PrePersist
@@ -68,4 +82,10 @@ public class Food {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public LocalDateTime getExpiresAt() { return expiresAt; }
+    public void setExpiresAt(LocalDateTime expiresAt) { this.expiresAt = expiresAt; }
+
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 }

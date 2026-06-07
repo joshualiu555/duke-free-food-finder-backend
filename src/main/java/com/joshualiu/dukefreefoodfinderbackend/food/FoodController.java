@@ -2,6 +2,7 @@ package com.joshualiu.dukefreefoodfinderbackend.food;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -10,8 +11,8 @@ public class FoodController {
 
     private final FoodService service;
 
-    public FoodController(FoodService fs) {
-        this.service = fs;
+    public FoodController(FoodService service) {
+        this.service = service;
     }
 
     @GetMapping
