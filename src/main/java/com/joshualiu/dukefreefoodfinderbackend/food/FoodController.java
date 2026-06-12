@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/food-posts")
+@RequestMapping("/api/food")
 public class FoodController {
 
     private final FoodService service;
@@ -17,12 +17,12 @@ public class FoodController {
 
     @GetMapping
     public List<Food> getAll() {
-        return service.getAllPosts();
+        return service.getAllFoods();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Food> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(service.getPostById(id));
+        return ResponseEntity.ok(service.getFoodById(id));
     }
 
     @PostMapping

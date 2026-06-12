@@ -62,7 +62,7 @@ class FoodServiceTest {
         when(repository.findByExpiresAtAfter(any(LocalDateTime.class)))
                 .thenReturn(List.of(food1, food2));
 
-        List<Food> result = service.getAllPosts();
+        List<Food> result = service.getAllFoods();
 
         assertThat(result).hasSize(2);
         assertThat(result.get(0).getTitle()).isEqualTo("Pizza");
@@ -73,7 +73,7 @@ class FoodServiceTest {
     void getById_existingId() {
         when(repository.findById(1L)).thenReturn(Optional.of(food1));
 
-        Food result = service.getPostById(1L);
+        Food result = service.getFoodById(1L);
 
         assertThat(result.getId()).isEqualTo(1L);
         assertThat(result.getTitle()).isEqualTo("Pizza");
@@ -83,7 +83,7 @@ class FoodServiceTest {
     void getById_nonExistingId() {
         when(repository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.getPostById(99L))
+        assertThatThrownBy(() -> service.getFoodById(99L))
                 .isInstanceOf(FoodNotFoundException.class)
                 .hasMessageContaining("99");
     }

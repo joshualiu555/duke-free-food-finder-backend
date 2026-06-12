@@ -20,24 +20,24 @@ public class FoodService {
         this.userService = userService;
     }
 
-    public List<Food> getAllPosts() {
+    public List<Food> getAllFoods() {
         return repository.findByExpiresAtAfter(LocalDateTime.now());
     }
 
-    public Food getPostById(Long id) {
+    public Food getFoodById(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new FoodNotFoundException("Food not found with id: " + id));
     }
 
     public Food createFood(Food food) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        String email = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
         User user = userService.getUserByEmail(email);
         food.setUser(user);
         return repository.save(food);
     }
 
     public Food updateFood(Long id, Food updated) {
-        Food existing = getPostById(id);
+        Food existing = getFoodById(id);
         validateOwner(existing);
         existing.setTitle(updated.getTitle());
         existing.setDescription(updated.getDescription());
@@ -50,7 +50,7 @@ public class FoodService {
     }
 
     public void deleteFood(Long id) {
-        Food existing = getPostById(id);
+        Food existing = getFoodById(id);
         validateOwner(existing);
         repository.deleteById(id);
     }
@@ -58,7 +58,7 @@ public class FoodService {
     private void validateOwner(Food food) {
         String email = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
         if (!food.getUser().getEmail().equals(email)) {
-            throw new RuntimeException("You are not authorized to modify this post");
+            throw new RuntimeException("You are not authorized to modify this Food");
         }
     }
 }

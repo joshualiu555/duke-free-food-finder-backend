@@ -1,8 +1,9 @@
-package com.joshualiu.dukefreefoodfinderbackend.food;
+package com.joshualiu.dukefreefoodfinderbackend.forum;
 
 import com.joshualiu.dukefreefoodfinderbackend.auth.JwtAuthFilter;
 import com.joshualiu.dukefreefoodfinderbackend.auth.JwtService;
 import com.joshualiu.dukefreefoodfinderbackend.auth.SecurityConfig;
+import com.joshualiu.dukefreefoodfinderbackend.food.Food;
 import com.joshualiu.dukefreefoodfinderbackend.user.User;
 import jakarta.servlet.FilterChain;
 import tools.jackson.databind.ObjectMapper;
@@ -17,24 +18,24 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-@WebMvcTest(FoodController.class)
+@WebMvcTest(ForumController.class)
 @Import(SecurityConfig.class)
-class FoodControllerTest {
+class ForumControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockitoBean
-    private FoodService service;
+    private ForumService service;
 
     @MockitoBean
     private JwtService jwtService;
@@ -45,8 +46,7 @@ class FoodControllerTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private User user;
-    private Food food1;
-    private Food food2;
+    private Forum forum1;
     private UsernamePasswordAuthenticationToken mockAuth;
 
     @BeforeEach
@@ -63,69 +63,75 @@ class FoodControllerTest {
         mockAuth = new UsernamePasswordAuthenticationToken(
                 user, null, List.of(new SimpleGrantedAuthority("ROLE_USER")));
 
-        food1 = new Food("Pizza", "Leftover", 0.0, 0.0, "Main quad",
+        Food food = new Food("Pizza", "Leftover", 0.0, 0.0, "Social Sciences",
                 LocalDateTime.now().plusHours(2), user);
-        food1.setId(1L);
+        food.setId(10L);
 
-        food2 = new Food("Tacos", "Leftover", 100.0, 100.0, "Student union",
-                LocalDateTime.now().plusHours(2), user);
-        food2.setId(2L);
+        forum1 = new Forum("Any left?", user, food);
+        forum1.setId(1L);
+
+        Forum forum2 = new Forum("On my way!", user, food);
+        forum2.setId(2L);
     }
 
     @Test
-    void getAll_returnsOkWithBothFoods() throws Exception {
-        when(service.getAllFoods()).thenReturn(List.of(food1, food2));
+    void getAll_returnsOkWithBothForums() throws Exception {
+        when(service.getAllForums()).thenReturn(List.of(forum1));
 
-        mockMvc.perform(get("/api/food"))
+        mockMvc.perform(get("/api/forum")
+                        .with(authentication(mockAuth)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(2));
+                .andExpect(jsonPath("$.length()").value(1));
     }
 
     @Test
     void getById_existingId_returnsOk() throws Exception {
-        when(service.getFoodById(1L)).thenReturn(food1);
+        when(service.getForumById(1L)).thenReturn(forum1);
 
-        mockMvc.perform(get("/api/food/1"))
+        mockMvc.perform(get("/api/forum/1")
+                        .with(authentication(mockAuth)))
                 .andExpect(status().isOk());
     }
 
     @Test
     void getById_nonExistingId_returns404() throws Exception {
-        when(service.getFoodById(99L)).thenThrow(new FoodNotFoundException("Food not found with id: 99"));
+        when(service.getForumById(99L))
+                .thenThrow(new ForumNotFoundException("Forum not found with id: 99"));
 
-        mockMvc.perform(get("/api/food/99"))
+        mockMvc.perform(get("/api/forum/99")
+                        .with(authentication(mockAuth)))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    void create_validFood_returnsOk() throws Exception {
-        when(service.createFood(any(Food.class))).thenReturn(food1);
+    void create_validForum_returnsOk() throws Exception {
+        when(service.createForum(any(Forum.class))).thenReturn(forum1);
 
-        mockMvc.perform(post("/api/food")
+        mockMvc.perform(post("/api/forum")
                         .with(authentication(mockAuth))
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(food1)))
+                        .content(objectMapper.writeValueAsString(forum1)))
                 .andExpect(status().isOk());
     }
 
     @Test
     void update_existingId_returnsOk() throws Exception {
-        when(service.updateFood(eq(1L), any(Food.class))).thenReturn(food2);
+        when(service.updateForum(eq(1L), any(Forum.class))).thenReturn(forum1);
 
-        mockMvc.perform(put("/api/food/1")
+        mockMvc.perform(put("/api/forum/1")
                         .with(authentication(mockAuth))
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(food2)))
+                        .content(objectMapper.writeValueAsString(forum1)))
                 .andExpect(status().isOk());
     }
 
     @Test
     void delete_existingId_returns204() throws Exception {
-        doNothing().when(service).deleteFood(1L);
+        doNothing().when(service).deleteForum(1L);
 
-        mockMvc.perform(delete("/api/food/1")
+        mockMvc.perform(delete("/api/forum/1")
                         .with(authentication(mockAuth))
                         .with(csrf()))
                 .andExpect(status().isNoContent());

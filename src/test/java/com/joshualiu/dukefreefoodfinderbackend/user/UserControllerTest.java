@@ -51,7 +51,6 @@ class UserControllerTest {
         user = new User("joshua.liu@duke.edu");
         user.setId(1L);
 
-        // FIX: Pass the email string as the principal, not the User object
         mockAuth = new UsernamePasswordAuthenticationToken(
                 user.getEmail(), null, List.of(new SimpleGrantedAuthority("ROLE_USER")));
     }
@@ -72,7 +71,6 @@ class UserControllerTest {
         User sarah = new User("sarah@duke.edu");
         sarah.setId(2L);
 
-        // FIX: Pass Sarah's email string as the principal
         UsernamePasswordAuthenticationToken sarahAuth = new UsernamePasswordAuthenticationToken(
                 sarah.getEmail(), null, List.of(new SimpleGrantedAuthority("ROLE_USER")));
 
@@ -83,7 +81,6 @@ class UserControllerTest {
 
     @Test
     void getById_notLoggedIn_returns403() throws Exception {
-        // No authentication token provided
         mockMvc.perform(get("/api/users/1"))
                 .andExpect(status().isForbidden());
     }
