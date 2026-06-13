@@ -61,6 +61,6 @@ public class AuthService {
         codeRepository.save(verificationCode);
 
         User user = userService.createUser(email);
-        return jwtService.generateToken(user.getEmail());
+        return jwtService.generateToken(user.getEmail(), user.getId());
     }
 }
