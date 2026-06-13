@@ -66,7 +66,7 @@ class ForumControllerTest {
 
         Food food = new Food("Pizza", "Leftover", 0.0, 0.0, "Social Sciences",
                 LocalDateTime.now().plusHours(2), user);
-        food.setId(10L);
+        food.setId(1L);
 
         forum1 = new Forum("Any left?", user, food);
         forum1.setId(1L);
@@ -106,9 +106,9 @@ class ForumControllerTest {
 
     @Test
     void create_validForum_returnsOk() throws Exception {
-        when(service.createForum(any(Forum.class))).thenReturn(forum1);
+        when(service.createForum(eq(1L), any(Forum.class))).thenReturn(forum1);
 
-        mockMvc.perform(post("/api/forum")
+        mockMvc.perform(post("/api/forum/food/1")
                         .with(authentication(mockAuth))
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -140,9 +140,9 @@ class ForumControllerTest {
 
     @Test
     void getAllByFood_returnsOkWithBothForums() throws Exception {
-        when(service.getAllForumsByFood(10L)).thenReturn(List.of(forum1, forum2));
+        when(service.getAllForumsByFood(1L)).thenReturn(List.of(forum1, forum2));
 
-        mockMvc.perform(get("/api/forum/food/10")
+        mockMvc.perform(get("/api/forum/food/1")
                         .with(authentication(mockAuth)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2));

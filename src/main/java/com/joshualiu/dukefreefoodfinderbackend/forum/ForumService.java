@@ -42,10 +42,13 @@ public class ForumService {
         return repository.findByUser(user);
     }
 
-    public Forum createForum(Forum forum) {
+    public Forum createForum(Long foodId, Forum forum) {
         String email = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
         User user = userService.getUserByEmail(email);
+        Food food = new Food();
+        food.setId(foodId);
         forum.setUser(user);
+        forum.setFood(food);
         return repository.save(forum);
     }
 

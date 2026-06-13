@@ -35,9 +35,9 @@ public class ForumController {
         return service.getAllForumsByUser(userId);
     }
 
-    @PostMapping
-    public ResponseEntity<Forum> create(@RequestBody Forum Forum) {
-        return ResponseEntity.ok(service.createForum(Forum));
+    @PostMapping("/food/{foodId}")
+    public ResponseEntity<Forum> create(@PathVariable Long foodId, @RequestBody Forum forum) {
+        return ResponseEntity.ok(service.createForum(foodId, forum));
     }
 
     @PutMapping("/{id}")

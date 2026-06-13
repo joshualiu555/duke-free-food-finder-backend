@@ -47,7 +47,7 @@ class ForumServiceTest {
 
         food = new Food("Pizza", "Leftover", 0.0, 0.0, "Social Sciences",
                 LocalDateTime.now().plusHours(2), user);
-        food.setId(10L);
+        food.setId(1L);
 
         forum1 = new Forum("What type of pizza?", user, food);
         forum1.setId(1L);
@@ -97,7 +97,7 @@ class ForumServiceTest {
         when(userService.getUserByEmail("joshua.liu@duke.edu")).thenReturn(user);
         when(repository.save(forum1)).thenReturn(forum1);
 
-        Forum result = service.createForum(forum1);
+        Forum result = service.createForum(1L, forum1);
 
         assertThat(result.getContent()).isEqualTo("What type of pizza?");
         verify(repository, times(1)).save(forum1);
@@ -129,7 +129,7 @@ class ForumServiceTest {
     void getAllForumsByFood_returnsBothForums() {
         when(repository.findByFood(any(Food.class))).thenReturn(List.of(forum1, forum2));
 
-        List<Forum> result = service.getAllForumsByFood(10L);
+        List<Forum> result = service.getAllForumsByFood(1L);
 
         assertThat(result).hasSize(2);
         assertThat(result.get(0).getContent()).isEqualTo("What type of pizza?");
