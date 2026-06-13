@@ -142,4 +142,15 @@ class FoodServiceTest {
         verify(s3Service, times(1)).uploadFile(file);
         verify(repository, times(1)).save(food1);
     }
+
+    @Test
+    void getAllFoodsByUser_returnsBothFoods() {
+        when(repository.findByUser(any(User.class))).thenReturn(List.of(food1, food2));
+
+        List<Food> result = service.getAllFoodsByUser(1L);
+
+        assertThat(result).hasSize(2);
+        assertThat(result.get(0).getTitle()).isEqualTo("Pizza");
+        assertThat(result.get(1).getTitle()).isEqualTo("Tacos");
+    }
 }

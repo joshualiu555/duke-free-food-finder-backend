@@ -149,4 +149,14 @@ class FoodControllerTest {
                         .with(csrf()))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void getAllByUser_returnsOkWithBothFoods() throws Exception {
+        when(service.getAllFoodsByUser(1L)).thenReturn(List.of(food1, food2));
+
+        mockMvc.perform(get("/api/food/user/1")
+                        .with(authentication(mockAuth)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2));
+    }
 }

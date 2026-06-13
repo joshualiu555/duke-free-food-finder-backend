@@ -1,5 +1,6 @@
 package com.joshualiu.dukefreefoodfinderbackend.forum;
 
+import com.joshualiu.dukefreefoodfinderbackend.food.Food;
 import com.joshualiu.dukefreefoodfinderbackend.user.User;
 import com.joshualiu.dukefreefoodfinderbackend.user.UserService;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,6 +28,18 @@ public class ForumService {
     public Forum getForumById(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new ForumNotFoundException("Forum not found with id: " + id));
+    }
+
+    public List<Forum> getAllForumsByFood(Long foodId) {
+        Food food = new Food();
+        food.setId(foodId);
+        return repository.findByFood(food);
+    }
+
+    public List<Forum> getAllForumsByUser(Long userId) {
+        User user = new User();
+        user.setId(userId);
+        return repository.findByUser(user);
     }
 
     public Forum createForum(Forum forum) {

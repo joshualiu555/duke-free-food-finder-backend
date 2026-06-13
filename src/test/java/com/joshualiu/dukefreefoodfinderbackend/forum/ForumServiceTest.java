@@ -124,4 +124,26 @@ class ForumServiceTest {
 
         verify(repository, times(1)).deleteById(1L);
     }
+
+    @Test
+    void getAllForumsByFood_returnsBothForums() {
+        when(repository.findByFood(any(Food.class))).thenReturn(List.of(forum1, forum2));
+
+        List<Forum> result = service.getAllForumsByFood(10L);
+
+        assertThat(result).hasSize(2);
+        assertThat(result.get(0).getContent()).isEqualTo("What type of pizza?");
+        assertThat(result.get(1).getContent()).isEqualTo("Any left?");
+    }
+
+    @Test
+    void getAllForumsByUser_returnsBothForums() {
+        when(repository.findByUser(any(User.class))).thenReturn(List.of(forum1, forum2));
+
+        List<Forum> result = service.getAllForumsByUser(1L);
+
+        assertThat(result).hasSize(2);
+        assertThat(result.get(0).getContent()).isEqualTo("What type of pizza?");
+        assertThat(result.get(1).getContent()).isEqualTo("Any left?");
+    }
 }

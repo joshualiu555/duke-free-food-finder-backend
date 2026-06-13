@@ -25,6 +25,16 @@ public class ForumController {
         return ResponseEntity.ok(service.getForumById(id));
     }
 
+    @GetMapping("/food/{foodId}")
+    public List<Forum> getAllByFood(@PathVariable Long foodId) {
+        return service.getAllForumsByFood(foodId);
+    }
+
+    @GetMapping("/user/{userId}")
+    public List<Forum> getAllByUser(@PathVariable Long userId) {
+        return service.getAllForumsByUser(userId);
+    }
+
     @PostMapping
     public ResponseEntity<Forum> create(@RequestBody Forum Forum) {
         return ResponseEntity.ok(service.createForum(Forum));

@@ -29,6 +29,12 @@ public class FoodService {
         return repository.findByExpiresAtAfter(LocalDateTime.now());
     }
 
+    public List<Food> getAllFoodsByUser(Long userId) {
+        User user = new User();
+        user.setId(userId);
+        return repository.findByUser(user);
+    }
+
     public Food getFoodById(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new FoodNotFoundException("Food not found with id: " + id));

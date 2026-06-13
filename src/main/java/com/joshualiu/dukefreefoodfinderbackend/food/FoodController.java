@@ -27,6 +27,11 @@ public class FoodController {
         return ResponseEntity.ok(service.getFoodById(id));
     }
 
+    @GetMapping("/user/{userId}")
+    public List<Food> getAllByUser(@PathVariable Long userId) {
+        return service.getAllFoodsByUser(userId);
+    }
+
     @PostMapping
     public ResponseEntity<Food> create(@RequestBody Food food) {
         return ResponseEntity.ok(service.createFood(food));

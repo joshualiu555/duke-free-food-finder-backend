@@ -47,6 +47,7 @@ class ForumControllerTest {
 
     private User user;
     private Forum forum1;
+    private Forum forum2;
     private UsernamePasswordAuthenticationToken mockAuth;
 
     @BeforeEach
@@ -70,7 +71,7 @@ class ForumControllerTest {
         forum1 = new Forum("Any left?", user, food);
         forum1.setId(1L);
 
-        Forum forum2 = new Forum("On my way!", user, food);
+        forum2 = new Forum("On my way!", user, food);
         forum2.setId(2L);
     }
 
@@ -135,5 +136,25 @@ class ForumControllerTest {
                         .with(authentication(mockAuth))
                         .with(csrf()))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void getAllByFood_returnsOkWithBothForums() throws Exception {
+        when(service.getAllForumsByFood(10L)).thenReturn(List.of(forum1, forum2));
+
+        mockMvc.perform(get("/api/forum/food/10")
+                        .with(authentication(mockAuth)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2));
+    }
+
+    @Test
+    void getAllByUser_returnsOkWithBothForums() throws Exception {
+        when(service.getAllForumsByUser(1L)).thenReturn(List.of(forum1, forum2));
+
+        mockMvc.perform(get("/api/forum/user/1")
+                        .with(authentication(mockAuth)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2));
     }
 }

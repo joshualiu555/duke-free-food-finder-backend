@@ -36,7 +36,7 @@ public class AuthService {
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
-        message.setFrom("joshua.liu@duke.edu");
+        message.setFrom("noreply@dukefreefoodfinder.com");
         message.setSubject("Duke Free Food Finder - Verification Code");
         message.setText("Your verification code is: " + code + "\n\nThis code expires in 10 minutes.");
         mailSender.send(message);
