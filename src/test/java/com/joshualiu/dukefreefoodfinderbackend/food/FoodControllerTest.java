@@ -13,6 +13,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.MockMvc;
@@ -132,5 +133,20 @@ class FoodControllerTest {
                         .with(authentication(mockAuth))
                         .with(csrf()))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void uploadImage_returnsOk() throws Exception {
+        MockMultipartFile file = new MockMultipartFile(
+                "file", "pizza.jpg", "image/jpeg", "fake-image".getBytes());
+
+        food1.setImageUrl("https://s3.amazonaws.com/bucket/pizza.jpg");
+        when(service.uploadImage(eq(1L), any())).thenReturn(food1);
+
+        mockMvc.perform(multipart("/api/food/1/image")
+                        .file(file)
+                        .with(authentication(mockAuth))
+                        .with(csrf()))
+                .andExpect(status().isOk());
     }
 }

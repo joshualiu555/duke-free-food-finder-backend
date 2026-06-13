@@ -1,5 +1,6 @@
 package com.joshualiu.dukefreefoodfinderbackend.food;
 
+import com.joshualiu.dukefreefoodfinderbackend.storage.S3Service;
 import com.joshualiu.dukefreefoodfinderbackend.user.User;
 import com.joshualiu.dukefreefoodfinderbackend.user.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,6 +31,9 @@ class FoodServiceTest {
 
     @Mock
     private UserService userService;
+
+    @Mock
+    private S3Service s3Service;
 
     @InjectMocks
     private FoodService service;
@@ -120,5 +125,21 @@ class FoodServiceTest {
         service.deleteFood(1L);
 
         verify(repository, times(1)).deleteById(1L);
+    }
+
+    @Test
+    void uploadImage_savesImageUrlAndReturnsFood() throws Exception {
+        MockMultipartFile file = new MockMultipartFile(
+                "file", "pizza.jpg", "image/jpeg", "fake-image".getBytes());
+
+        when(repository.findById(1L)).thenReturn(Optional.of(food1));
+        when(s3Service.uploadFile(file)).thenReturn("https://s3.amazonaws.com/bucket/pizza.jpg");
+        when(repository.save(any(Food.class))).thenReturn(food1);
+
+        Food result = service.uploadImage(1L, file);
+
+        assertThat(result.getImageUrl()).isEqualTo("https://s3.amazonaws.com/bucket/pizza.jpg");
+        verify(s3Service, times(1)).uploadFile(file);
+        verify(repository, times(1)).save(food1);
     }
 }

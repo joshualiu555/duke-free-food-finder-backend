@@ -41,6 +41,9 @@ public class Food {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     public Food() {}
 
     public Food(String title, String description, Double latitude, Double longitude,
@@ -87,4 +90,7 @@ public class Food {
 
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
+
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 }
