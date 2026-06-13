@@ -76,7 +76,8 @@ class FoodControllerTest {
     void getAll_returnsOkWithBothFoods() throws Exception {
         when(service.getAllFoods()).thenReturn(List.of(food1, food2));
 
-        mockMvc.perform(get("/api/food"))
+        mockMvc.perform(get("/api/food")
+                        .with(authentication(mockAuth)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2));
     }
@@ -85,7 +86,8 @@ class FoodControllerTest {
     void getById_existingId_returnsOk() throws Exception {
         when(service.getFoodById(1L)).thenReturn(food1);
 
-        mockMvc.perform(get("/api/food/1"))
+        mockMvc.perform(get("/api/food/1")
+                        .with(authentication(mockAuth)))
                 .andExpect(status().isOk());
     }
 
@@ -93,7 +95,8 @@ class FoodControllerTest {
     void getById_nonExistingId_returns404() throws Exception {
         when(service.getFoodById(99L)).thenThrow(new FoodNotFoundException("Food not found with id: 99"));
 
-        mockMvc.perform(get("/api/food/99"))
+        mockMvc.perform(get("/api/food/99")
+                        .with(authentication(mockAuth)))
                 .andExpect(status().isNotFound());
     }
 
