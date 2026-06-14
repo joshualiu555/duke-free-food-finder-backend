@@ -145,7 +145,8 @@ class FoodServiceTest {
 
     @Test
     void getAllFoodsByUser_returnsBothFoods() {
-        when(repository.findByUser(any(User.class))).thenReturn(List.of(food1, food2));
+        when(repository.findByUserAndExpiresAtAfter(any(User.class), any(LocalDateTime.class)))
+                .thenReturn(List.of(food1, food2));
 
         List<Food> result = service.getAllFoodsByUser(1L);
 
