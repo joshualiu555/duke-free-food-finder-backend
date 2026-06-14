@@ -2,8 +2,10 @@ package com.joshualiu.dukefreefoodfinderbackend.auth;
 
 import com.joshualiu.dukefreefoodfinderbackend.user.User;
 import com.joshualiu.dukefreefoodfinderbackend.user.UserService;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import com.resend.Resend;
+import com.resend.core.exception.ResendException;
+import com.resend.services.emails.model.CreateEmailOptions;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -14,16 +16,16 @@ public class AuthService {
     private final VerificationCodeRepository codeRepository;
     private final UserService userService;
     private final JwtService jwtService;
-    private final JavaMailSender mailSender;
+
+    @Value("${resend.api.key}")
+    private String resendApiKey;
 
     public AuthService(VerificationCodeRepository codeRepository,
                        UserService userService,
-                       JwtService jwtService,
-                       JavaMailSender mailSender) {
+                       JwtService jwtService) {
         this.codeRepository = codeRepository;
         this.userService = userService;
         this.jwtService = jwtService;
-        this.mailSender = mailSender;
     }
 
     public void sendCode(String email) {
@@ -34,12 +36,19 @@ public class AuthService {
         String code = String.format("%06d", new SecureRandom().nextInt(999999));
         codeRepository.save(new VerificationCode(email, code));
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(email);
-        message.setFrom("noreply@dukefreefoodfinder.com");
-        message.setSubject("Duke Free Food Finder - Verification Code");
-        message.setText("Your verification code is: " + code + "\n\nThis code expires in 10 minutes.");
-        mailSender.send(message);
+        Resend resend = new Resend(resendApiKey);
+        CreateEmailOptions params = CreateEmailOptions.builder()
+                .from("noreply@dukefreefoodfinder.com")
+                .to(email)
+                .subject("Duke Free Food Finder - Verification Code")
+                .html("<p>Your verification code is: <strong>" + code + "</strong></p><p>This code expires in 10 minutes.</p>")
+                .build();
+
+        try {
+            resend.emails().send(params);
+        } catch (ResendException e) {
+            throw new RuntimeException("Failed to send email: " + e.getMessage());
+        }
     }
 
     public String verifyCode(String email, String code) {
