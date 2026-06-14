@@ -9,4 +9,5 @@ import java.util.List;
 public interface ForumRepository extends JpaRepository<Forum, Long> {
     List<Forum> findByFood(Food food);
     List<Forum> findByUser(User user);
+    List<Forum> findByUserAndFoodExpiresAtAfter(User user, LocalDateTime now);
 }

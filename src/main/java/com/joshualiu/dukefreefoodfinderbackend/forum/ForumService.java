@@ -39,7 +39,7 @@ public class ForumService {
     public List<Forum> getAllForumsByUser(Long userId) {
         User user = new User();
         user.setId(userId);
-        return repository.findByUser(user);
+        return repository.findByUserAndFoodExpiresAtAfter(user, LocalDateTime.now());
     }
 
     public Forum createForum(Long foodId, Forum forum) {

@@ -138,7 +138,8 @@ class ForumServiceTest {
 
     @Test
     void getAllForumsByUser_returnsBothForums() {
-        when(repository.findByUser(any(User.class))).thenReturn(List.of(forum1, forum2));
+        when(repository.findByUserAndFoodExpiresAtAfter(any(User.class), any(LocalDateTime.class)))
+                .thenReturn(List.of(forum1, forum2));
 
         List<Forum> result = service.getAllForumsByUser(1L);
 
