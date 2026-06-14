@@ -32,7 +32,7 @@ public class FoodService {
     public List<Food> getAllFoodsByUser(Long userId) {
         User user = new User();
         user.setId(userId);
-        return repository.findByUser(user);
+        return repository.findByUserAndExpiresAtAfter(user, LocalDateTime.now());
     }
 
     public Food getFoodById(Long id) {

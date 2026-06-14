@@ -8,4 +8,5 @@ import java.util.List;
 public interface FoodRepository extends JpaRepository<Food, Long> {
     List<Food> findByExpiresAtAfter(LocalDateTime now);
     List<Food> findByUser(User user);
+    List<Food> findByUserAndExpiresAtAfter(User user, LocalDateTime now);
 }
