@@ -22,7 +22,7 @@ public class Forum {
     private LocalDateTime createdAt;
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -55,6 +55,10 @@ public class Forum {
 
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
+
+    public String getUserEmail() {
+        return user != null ? user.getEmail() : null;
+    }
 
     public Food getFood() { return food; }
     public void setFood(Food food) { this.food = food; }
